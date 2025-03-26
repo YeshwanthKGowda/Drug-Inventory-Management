@@ -46,7 +46,7 @@ function showPaymentOptions() {
     }
 }
 
-// Process Payment
+// Process Payment & Store Order Data
 function processPayment() {
     let paymentMethod = document.getElementById("payment-method").value;
     
@@ -59,17 +59,71 @@ function processPayment() {
     setTimeout(() => {
         alert("Payment Successful!");
 
-        // Store Purchased Items in LocalStorage
+        // Generate Unique Order ID (Random for now)
+        const orderId = "ORD" + Math.floor(100000 + Math.random() * 900000); // Example: ORD123456
+
+        // Get Cart Items
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        // Save Order Data in Local Storage
+        const orderData = {
+            orderId: orderId,
+            vendorName: "ABC Pharma",  // Example vendor name
+            status: "Processing",      // Default status
+            deliveryDate: "2025-04-01", // Dummy delivery date
+            paymentStatus: "Paid",
+            paymentMode: paymentMethod,
+            drugs: cart
+        };
+
+        localStorage.setItem("currentOrder", JSON.stringify(orderData));
+
+        // Store Purchased Items in LocalStorage
         let previousPurchases = JSON.parse(localStorage.getItem("purchasedDrugs")) || [];
         previousPurchases.push(...cart);
-
         localStorage.setItem("purchasedDrugs", JSON.stringify(previousPurchases));
-        localStorage.removeItem("cart"); // Clear cart after payment
 
-        window.location.href = "dashboard.html"; // Redirect to Dashboard
+        // Clear cart after payment
+        localStorage.removeItem("cart");
+
+        // Redirect to Dashboard
+        window.location.href = "dashboard.html";
     }, 2000);
 }
 
 // Load Data on Page Load
 window.onload = loadOrderSummary;
+
+function processPayment() {
+    alert("Payment Successful!");
+
+    // Generate Unique Order ID
+    const orderId = "ORD" + Math.floor(100000 + Math.random() * 900000);
+
+    // Get Cart Items from Local Storage
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let orderDate = new Date().toLocaleDateString();
+
+    // Create Order Data
+    const orderData = {
+        orderId: orderId,
+        orderDate: orderDate,
+        vendorName: "ABC Pharma",
+        status: "Processing",
+        deliveryDate: "2025-04-01",
+        paymentStatus: "Paid",
+        paymentMode: document.getElementById("payment-method").value,
+        drugs: cart
+    };
+
+    // Save Order to Order History
+    let orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
+    orderHistory.push(orderData);
+    localStorage.setItem("orderHistory", JSON.stringify(orderHistory));
+
+    // Clear Cart After Payment
+    localStorage.removeItem("cart");
+
+    // Redirect to Dashboard
+    window.location.href = "dashboard.html";
+}
