@@ -410,3 +410,132 @@ input, select {
     font-size: 16px;
     line-height: 1.5;
 }
+/* General Styling for Order Tracking */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+main {
+    width: 80%;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Search Box */
+.search-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#orderSearch {
+    width: 300px;
+    padding: 10px;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Order Details Section */
+#orderDetails {
+    text-align: left;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#orderDetails h2 {
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+#orderDetails p {
+    font-size: 18px;
+    margin: 5px 0;
+}
+
+#drugList {
+    list-style-type: none;
+    padding: 0;
+}
+
+#drugList li {
+    background: #f8f9fa;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+/* Hide Order Details Initially */
+.hidden {
+    display: none;
+}
+/* Navigation Button Styling */
+nav {
+    text-align: center;
+    margin: 20px 0;
+}
+
+nav a button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    margin: 5px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+nav a button:hover {
+    background-color: #0056b3;
+}
+
+/* Track Order Button */
+.track-order-btn {
+    display: inline-block;
+    background-color: #28a745; /* Green Color for Tracking */
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+}
+
+.track-order-btn:hover {
+    background-color: #218838;
+}
