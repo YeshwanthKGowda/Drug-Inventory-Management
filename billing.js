@@ -1,129 +1,101 @@
-// Dummy Payment QR Code URLs (Replace with actual QR codes)
-const qrCodes = {
-    phonepe: "phonepe_qr.png",
-    gpay: "gpay_qr.png",
-    paytm: "paytm_qr.png"
-};
+const API_URL = "http://localhost:5000/api";
 
-// Function to Load Order Summary from LocalStorage
 function loadOrderSummary() {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    let orderSummaryTable = document.getElementById("order-summary");
-    let totalAmount = 0;
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const orderSummary = document.getElementById("order-summary");
+    let total = 0;
 
-    orderSummaryTable.innerHTML = ""; // Clear previous data
-
+    orderSummary.innerHTML = "";
     cart.forEach(item => {
-        let row = `<tr>
-            <td>${item.name}</td>
-            <td>₹${item.price}</td>
-            <td>${item.quantity}</td>
-            <td>₹${item.price * item.quantity}</td>
-        </tr>`;
-        orderSummaryTable.innerHTML += row;
-        totalAmount += item.price * item.quantity;
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+        orderSummary.innerHTML += `
+            <tr>
+                <td>${item.name}</td>
+                <td>₹${item.price}</td>
+                <td>${item.quantity}</td>
+                <td>₹${subtotal.toFixed(2)}</td>
+            </tr>`;
     });
 
-    document.getElementById("total-amount").innerText = totalAmount.toFixed(2);
+    document.getElementById("total-amount").innerText = total.toFixed(2);
 }
 
-// Show Payment Options Based on Selection
+// Optional QR/Card logic (keep this if needed)
 function showPaymentOptions() {
-    let paymentMethod = document.getElementById("payment-method").value;
-    let qrSection = document.getElementById("qr-section");
-    let cardSection = document.getElementById("card-section");
-    let qrImage = document.getElementById("qr-code");
+    const paymentMethod = document.getElementById("payment-method").value;
+    const qrSection = document.getElementById("qr-section");
+    const cardSection = document.getElementById("card-section");
+    const qrImage = document.getElementById("qr-code");
 
-    // Hide all sections first
     qrSection.classList.add("hidden");
     cardSection.classList.add("hidden");
 
+    const qrCodes = {
+        phonepe: "qr.png",
+        gpay: "qr.png",
+        paytm: "qr.png"
+    };
+
     if (qrCodes[paymentMethod]) {
         qrSection.classList.remove("hidden");
-        qrImage.src = qrCodes[paymentMethod]; // Load corresponding QR code
+        qrImage.src = qrCodes[paymentMethod];
     } else if (paymentMethod === "debit" || paymentMethod === "credit") {
         cardSection.classList.remove("hidden");
     }
 }
 
-// Process Payment & Store Order Data
-function processPayment() {
-    let paymentMethod = document.getElementById("payment-method").value;
-    
+async function processPayment() {
+    const paymentMethod = document.getElementById("payment-method").value;
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const token = localStorage.getItem("token");
+
     if (!paymentMethod) {
-        alert("Please select a payment method.");
+        alert("Select a payment method.");
         return;
     }
 
-    // Simulate Payment Processing
-    setTimeout(() => {
-        alert("Payment Successful!");
+    if (!token) {
+        alert("You are not logged in.");
+        return;
+    }
 
-        // Generate Unique Order ID (Random for now)
-        const orderId = "ORD" + Math.floor(100000 + Math.random() * 900000); // Example: ORD123456
+    try {
+        const response = await fetch(`${API_URL}/orders`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                items: cart.map(item => ({
+                    drugId: item.id,
+                    quantity: item.quantity
+                })),
+                paymentMode: paymentMethod // ✅ Add this back for backend compatibility
+            })
+        });
 
-        // Get Cart Items
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const result = await response.json();
 
-        // Save Order Data in Local Storage
-        const orderData = {
-            orderId: orderId,
-            vendorName: "ABC Pharma",  // Example vendor name
-            status: "Processing",      // Default status
-            deliveryDate: "2025-04-01", // Dummy delivery date
-            paymentStatus: "Paid",
-            paymentMode: paymentMethod,
-            drugs: cart
-        };
+        if (response.ok) {
+            alert("Payment Successful!");
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+localStorage.setItem("cart", JSON.stringify(cart));
 
-        localStorage.setItem("currentOrder", JSON.stringify(orderData));
+// Then clear cart only after saving invoice data or after redirect if you want
+// Or, if you prefer to clear, save to a separate key for invoice:
+localStorage.setItem("invoiceCart", JSON.stringify(cart));
+localStorage.removeItem("cart");
 
-        // Store Purchased Items in LocalStorage
-        let previousPurchases = JSON.parse(localStorage.getItem("purchasedDrugs")) || [];
-        previousPurchases.push(...cart);
-        localStorage.setItem("purchasedDrugs", JSON.stringify(previousPurchases));
-
-        // Clear cart after payment
-        localStorage.removeItem("cart");
-
-        // Redirect to Dashboard
-        window.location.href = "dashboard.html";
-    }, 2000);
+window.location.href = "invoice.html";
+        } else {
+            alert(result.message || "Payment failed.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error processing payment.");
+    }
 }
 
-// Load Data on Page Load
 window.onload = loadOrderSummary;
-
-function processPayment() {
-    alert("Payment Successful!");
-
-    // Generate Unique Order ID
-    const orderId = "ORD" + Math.floor(100000 + Math.random() * 900000);
-
-    // Get Cart Items from Local Storage
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    let orderDate = new Date().toLocaleDateString();
-
-    // Create Order Data
-    const orderData = {
-        orderId: orderId,
-        orderDate: orderDate,
-        vendorName: "ABC Pharma",
-        status: "Processing",
-        deliveryDate: "2025-04-01",
-        paymentStatus: "Paid",
-        paymentMode: document.getElementById("payment-method").value,
-        drugs: cart
-    };
-
-    // Save Order to Order History
-    let orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
-    orderHistory.push(orderData);
-    localStorage.setItem("orderHistory", JSON.stringify(orderHistory));
-
-    // Clear Cart After Payment
-    localStorage.removeItem("cart");
-
-    // Redirect to Dashboard
-    window.location.href = "dashboard.html";
-}

@@ -20,11 +20,9 @@
         <!-- Login Form -->
         <div id="login-box">
             <h2>Login</h2>
-            <input type="text" id="login-email" placeholder="Username or Email">
-            <input type="password" id="login-password" placeholder="Password">
-            <input type="text" id="login-phone" placeholder="Phone Number">
-            <button onclick="sendOTP()">Send OTP</button>
-            <input type="text" id="login-otp" placeholder="Enter OTP">
+            <input type="email" id="login-email" placeholder="Email" />
+<input type="password" id="login-password" placeholder="Password" />
+
             <button onclick="loginUser()">Login</button>
             <p>Don't have an account? <a href="#" onclick="toggleAuth()">Sign Up</a></p>
         </div>
@@ -41,12 +39,6 @@
             <input type="text" id="signup-state" placeholder="State">
             <input type="text" id="signup-city" value="Bangalore" disabled>
             <input type="text" id="signup-pincode" placeholder="Pincode">
-            <select id="user-role">
-                <option value="vendor">Vendor</option>
-                <option value="distributor">Distributor</option>
-            </select>
-            <button onclick="sendSignupOTP()">Send OTP</button>
-            <input type="text" id="signup-otp" placeholder="Enter OTP">
             <button onclick="registerUser()">Sign Up</button>
             <p>Already have an account? <a href="#" onclick="toggleAuth()">Login</a></p>
         </div>

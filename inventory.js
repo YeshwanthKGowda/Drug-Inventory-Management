@@ -22,18 +22,11 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>${drug.batch}</td>
             <td class="${colorClass}">${drug.expiry}</td>
             <td class="${drug.stock < 50 ? 'low-stock' : ''}">${drug.stock}</td>
-            <td><div id="qr-${index}" class="qr-code"></div></td>
-            <td><button class="reorder-btn" onclick="reorder('${drug.name}')">Reorder</button></td>
         `;
 
         inventoryBody.appendChild(row);
 
-        // Generate QR Code
-        new QRCode(document.getElementById(`qr-${index}`), {
-            text: `${drug.name} - Batch: ${drug.batch}`,
-            width: 50,
-            height: 50
-        });
+        
     });
 
     // AI-Based Demand Prediction (Random Sample Data)
@@ -51,6 +44,4 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-function reorder(drugName) {
-    alert(`Reorder request sent for ${drugName}`);
-}
+

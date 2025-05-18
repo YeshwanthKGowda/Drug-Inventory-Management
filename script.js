@@ -3,58 +3,57 @@ function toggleAuth() {
     document.getElementById("signup-box").classList.toggle("hidden");
 }
 
-function loginUser() {
-    window.location.href = "home.html";
-}
+async function registerUser() {
+    const username = document.getElementById("signup-firstname").value;
+    const email = document.getElementById("signup-email").value;
+    const password = document.getElementById("signup-password").value;
 
-function sendOTP() {
-    alert("OTP sent to registered phone number.");
-}
+    try {
+        const res = await fetch("http://localhost:5000/api/auth/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password }),
+        });
 
-function sendSignupOTP() {
-    alert("OTP sent for verification.");
-}
+        const data = await res.json();
 
-function registerUser() {
-    alert("Account Created Successfully!");
-    window.location.href = "index.html";
-}
-function trackOrder() {
-    let searchInput = document.getElementById("orderSearch").value.trim();
-    
-    if (searchInput === "") {
-        alert("Please enter an Order ID or Vendor Name.");
-        return;
+        if (!res.ok) {
+            alert(data.message || "Signup failed");
+            return;
+        }
+
+        alert("Signup successful! Please login.");
+        toggleAuth(); // Switch to login box
+    } catch (err) {
+        console.error(err);
+        alert("Signup error");
     }
+}
 
-    // Simulated Data (Replace this with actual data fetching)
-    let mockOrder = {
-        orderId: "ORD12345",
-        vendorName: "MediLife Distributors",
-        status: "Shipped",
-        deliveryDate: "March 30, 2025",
-        drugs: ["Paracetamol", "Ibuprofen", "Amoxicillin"],
-        paymentStatus: "Paid",
-        paymentMode: "Credit Card"
-    };
+async function loginUser() {
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
 
-    // Populate order details
-    document.getElementById("orderId").innerText = mockOrder.orderId;
-    document.getElementById("vendorName").innerText = mockOrder.vendorName;
-    document.getElementById("status").innerText = mockOrder.status;
-    document.getElementById("deliveryDate").innerText = mockOrder.deliveryDate;
-    document.getElementById("paymentStatus").innerText = mockOrder.paymentStatus;
-    document.getElementById("paymentMode").innerText = mockOrder.paymentMode;
+    try {
+        const res = await fetch("http://localhost:5000/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        });
 
-    // Populate drug list
-    let drugListElement = document.getElementById("drugList");
-    drugListElement.innerHTML = ""; // Clear previous entries
-    mockOrder.drugs.forEach(drug => {
-        let li = document.createElement("li");
-        li.textContent = drug;
-        drugListElement.appendChild(li);
-    });
+        const data = await res.json();
 
-    // Show order details
-    document.getElementById("orderDetails").classList.remove("hidden");
+        if (!res.ok) {
+            alert(data.message || "Login failed");
+            return;
+        }
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("loggedInUser", JSON.stringify(data));
+        alert("Login successful!");
+        window.location.href = "dashboard.html";
+    } catch (err) {
+        console.error(err);
+        alert("Login error");
+    }
 }
